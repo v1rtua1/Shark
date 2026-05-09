@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CallProvider } from "@/context/CallContext";
 import { CallOverlay } from "@/components/ui/CallOverlay";
+import { SplashScreen } from "@/components/ui/SplashScreen";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +24,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "black-translucent",
-    title: "Chat PWA",
+    title: "Shark",
   },
 };
 
@@ -61,7 +62,8 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body className="h-[100dvh] w-full flex flex-col bg-background text-foreground overscroll-none selection:bg-primary/30 overflow-hidden fixed inset-0">
+      <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-black text-white selection:bg-primary/30 flex justify-center fixed inset-0 overflow-hidden`}>
+        <SplashScreen />
         <AuthProvider>
           <CallProvider>
             <ThemeProvider>
