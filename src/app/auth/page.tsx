@@ -19,7 +19,7 @@ export default function AuthScreen() {
   const [error, setError] = useState("");
   
   const router = useRouter();
-  const { login, register, loginWithGoogle } = useAuth();
+  const { login, register } = useAuth();
 
   const handleAuth = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -42,16 +42,6 @@ export default function AuthScreen() {
       setError(err.message || "Authentication failed");
     } finally {
       setIsLoading(false);
-    }
-  };
-
-  const handleGoogleSignIn = async () => {
-    try {
-      setError("");
-      await loginWithGoogle();
-      router.push("/chats");
-    } catch (err: any) {
-      setError(err.message || "Google sign in failed");
     }
   };
 
@@ -158,28 +148,12 @@ export default function AuthScreen() {
                 )}
               </Button>
 
-              <div className="relative flex items-center py-2">
-                <div className="flex-grow border-t border-white/10"></div>
-                <span className="flex-shrink-0 mx-4 text-zinc-500 text-xs uppercase tracking-widest">or</span>
-                <div className="flex-grow border-t border-white/10"></div>
-              </div>
-
-              <button
-                type="button"
-                onClick={handleGoogleSignIn}
-                disabled={isLoading}
-                className="w-full flex items-center justify-center gap-3 py-4 rounded-xl border border-white/10 bg-white/5 hover:bg-white/10 transition-all text-sm font-medium text-white"
-              >
-                <img src="https://www.google.com/favicon.ico" alt="Google" className="w-5 h-5" />
-                Sign in with Google
-              </button>
-
-              <p className="text-center text-zinc-500 text-sm mt-4">
+              <p className="text-center text-zinc-500 text-sm mt-6">
                 {isRegister ? "Already have an account?" : "Don't have an account?"}{" "}
                 <button 
                   type="button" 
                   onClick={() => setIsRegister(!isRegister)} 
-                  className="text-primary hover:text-white transition-colors"
+                  className="text-primary hover:text-white transition-colors font-medium"
                 >
                   {isRegister ? "Sign In" : "Register Now"}
                 </button>

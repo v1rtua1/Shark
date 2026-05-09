@@ -42,11 +42,11 @@ export default function RootLayout({
   return (
     <html
       lang="en"
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased dark`}
+      className={`${geistSans.variable} ${geistMono.variable} h-[100dvh] antialiased dark`}
     >
-      <body className="min-h-full flex flex-col bg-background text-foreground overscroll-none selection:bg-primary/30 overflow-x-hidden">
+      <body className="h-[100dvh] w-full flex flex-col bg-background text-foreground overscroll-none selection:bg-primary/30 overflow-hidden fixed inset-0">
         <ThemeProvider>
-          <div className="w-full max-w-md mx-auto min-h-[100dvh] relative bg-background shadow-2xl shadow-black/50 overflow-x-hidden flex flex-col">
+          <div className="w-full max-w-md mx-auto h-[100dvh] relative bg-background shadow-2xl shadow-black/50 overflow-y-auto overflow-x-hidden flex flex-col scroll-smooth">
             <AuthProvider>{children}</AuthProvider>
           </div>
         </ThemeProvider>
