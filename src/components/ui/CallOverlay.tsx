@@ -168,15 +168,13 @@ export function CallOverlay() {
                 <PhoneOff className="w-8 h-8" />
               </button>
 
-              {/* Video Toggle Button (Only for video calls) */}
-              {isVideoCall && (
-                <button 
-                  onClick={toggleVideo}
-                  className={`w-14 h-14 rounded-full flex items-center justify-center text-white shadow-xl transition-all active:scale-95 ${isVideoOff ? 'bg-white text-black' : 'bg-white/20 backdrop-blur-md border border-white/10 hover:bg-white/30'}`}
-                >
-                  {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
-                </button>
-              )}
+              {/* Video Toggle Button (Always visible now) */}
+              <button 
+                onClick={toggleVideo}
+                className={`w-14 h-14 rounded-full flex items-center justify-center text-white shadow-xl transition-all active:scale-95 ${isVideoOff ? 'bg-white text-black' : 'bg-white/20 backdrop-blur-md border border-white/10 hover:bg-white/30'}`}
+              >
+                {isVideoOff ? <VideoOff className="w-6 h-6" /> : <Video className="w-6 h-6" />}
+              </button>
             </>
           )}
 

@@ -336,12 +336,26 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     }
   };
 
-  const toggleVideo = () => {
-    if (localStream) {
-      localStream.getVideoTracks().forEach(track => {
+  const toggleVideo = async () => {
+    if (!localStream) return;
+    
+    const videoTracks = localStream.getVideoTracks();
+    if (videoTracks.length > 0) {
+      videoTracks.forEach(track => {
         track.enabled = !track.enabled;
         setIsVideoOff(!track.enabled);
       });
+    } else {
+      if (currentCall && user) {
+        alert("Prebacivanje na video poziv...");
+        const targetId = currentCall.callerId === user.uid ? currentCall.receiverId : currentCall.callerId;
+        const targetName = currentCall.callerId === user.uid ? "Partner" : currentCall.callerName;
+        
+        await endCall();
+        setTimeout(() => {
+          startCall(targetId, targetName, "", "video");
+        }, 1500);
+      }
     }
   };
 
