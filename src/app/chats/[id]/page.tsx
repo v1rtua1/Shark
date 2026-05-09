@@ -7,6 +7,7 @@ import { ChevronLeft, MoreVertical, Phone, Send, Paperclip, Smile, Image as Imag
 import { MessageBubble } from "@/components/ui/MessageBubble";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { useAuth } from "@/context/AuthContext";
+import { useCall } from "@/context/CallContext";
 import { cn } from "@/lib/utils";
 import { db, storage } from "@/lib/firebase";
 import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
@@ -31,6 +32,7 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
   const { id: partnerId } = use(params);
   const router = useRouter();
   const { user: currentUser } = useAuth();
+  const { startCall } = useCall();
   const { background } = useTheme();
   
   const [messages, setMessages] = useState<Message[]>([]);
@@ -237,8 +239,8 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
       <div className="absolute top-0 left-0 w-full h-[30vh] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-full h-[30vh] bg-gradient-to-t from-accent/10 to-transparent pointer-events-none" />
 
-      {/* Floating Header */}
-      <div className="absolute top-0 left-0 right-0 pt-safe-top pb-3 px-4 z-30 flex items-center justify-between bg-black/60 backdrop-blur-2xl border-b border-white/5 shadow-xl">
+      {/* Header */}
+      <div className="flex-none pt-safe-top pb-3 px-4 z-30 flex items-center justify-between bg-black/60 backdrop-blur-2xl border-b border-white/5 shadow-xl shrink-0">
         <div className="flex items-center gap-3">
           <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors">
             <ChevronLeft className="w-6 h-6" />
@@ -254,8 +256,17 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
           </div>
         </div>
         <div className="flex items-center gap-1 shrink-0">
-          <button className="p-2 rounded-full hover:bg-white/10 transition-colors text-zinc-400">
+          <button 
+            onClick={() => startCall(partnerId, partner?.displayName || "Unknown", partner?.photoURL || "", "audio")}
+            className="p-2 rounded-full hover:bg-white/10 transition-colors text-zinc-400"
+          >
             <Phone className="w-5 h-5" />
+          </button>
+          <button 
+            onClick={() => startCall(partnerId, partner?.displayName || "Unknown", partner?.photoURL || "", "video")}
+            className="p-2 rounded-full hover:bg-white/10 transition-colors text-zinc-400"
+          >
+            <Video className="w-5 h-5" />
           </button>
           <button className="p-2 rounded-full hover:bg-white/10 transition-colors text-zinc-400">
             <MoreVertical className="w-5 h-5" />
@@ -264,7 +275,7 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 pt-24 pb-28 scroll-smooth overscroll-none z-10">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 py-4 scroll-smooth overscroll-none z-10 min-h-0">
         <div className="flex flex-col justify-end min-h-full">
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
@@ -297,8 +308,8 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
         </div>
       </div>
 
-      {/* Floating Input Area */}
-      <div className="absolute bottom-0 left-0 right-0 w-full p-4 pb-safe-bottom z-30 bg-gradient-to-t from-black via-black/90 to-transparent">
+      {/* Input Area */}
+      <div className="flex-none w-full p-4 pb-safe-bottom z-30 bg-black/60 backdrop-blur-2xl border-t border-white/5 shrink-0">
         
         <AnimatePresence>
           {showEmoji && (
