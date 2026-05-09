@@ -1,7 +1,7 @@
 {
-  "name": "Chat PWA",
-  "short_name": "Chat",
-  "description": "Secure, private, modern messaging application.",
+  "name": "Shark Messenger",
+  "short_name": "Shark",
+  "description": "Premium, secure, modern messaging application.",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#09090b",

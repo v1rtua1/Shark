@@ -17,7 +17,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Chat PWA",
+  title: "Shark Messenger",
   description: "A highly modern, privacy-focused messaging application.",
   manifest: "/manifest.json",
   appleWebApp: {
