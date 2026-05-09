@@ -170,35 +170,26 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     await setDoc(doc(db, "users", receiverId, "incoming_call", "call"), callWithOffer);
 
     // Listen for answer
-    const candidateQueue: RTCIceCandidate[] = [];
-    
     onSnapshot(newCallRef, (snapshot) => {
       const data = snapshot.data();
       if (!peerConnection.currentRemoteDescription && data?.answer) {
         const answerDescription = new RTCSessionDescription(data.answer);
         peerConnection.setRemoteDescription(answerDescription).then(() => {
-          candidateQueue.forEach(c => peerConnection.addIceCandidate(c).catch(console.error));
-          candidateQueue.length = 0;
-        }).catch(console.error);
+          // Listen for remote ICE candidates AFTER remote description is set
+          onSnapshot(collection(newCallRef, "receiverCandidates"), (candSnapshot) => {
+            candSnapshot.docChanges().forEach((change) => {
+              if (change.type === "added") {
+                const candidate = new RTCIceCandidate(change.doc.data());
+                peerConnection.addIceCandidate(candidate).catch(e => console.error(e));
+              }
+            });
+          });
+        });
         setCurrentCall(prev => prev ? { ...prev, status: "connected" } : null);
       }
       if (data?.status === "ended" || data?.status === "rejected") {
         cleanupCall();
       }
-    });
-
-    // Listen for remote ICE candidates
-    onSnapshot(collection(newCallRef, "receiverCandidates"), (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-          const candidate = new RTCIceCandidate(change.doc.data());
-          if (peerConnection.remoteDescription) {
-            peerConnection.addIceCandidate(candidate).catch(console.error);
-          } else {
-            candidateQueue.push(candidate);
-          }
-        }
-      });
     });
   };
 
@@ -249,7 +240,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       snapshot.docChanges().forEach((change) => {
         if (change.type === "added") {
           const candidate = new RTCIceCandidate(change.doc.data());
-          peerConnection.addIceCandidate(candidate);
+          peerConnection.addIceCandidate(candidate).catch(e => console.error(e));
         }
       });
     });

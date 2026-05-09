@@ -47,19 +47,13 @@ export function CallOverlay() {
         exit={{ opacity: 0, scale: 0.95 }}
         className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden"
       >
-        {/* Always render an audio element to play remote sound! */}
-        {remoteStream && (
-          <audio 
-            ref={(el) => {
-              if (el && !isVideoCall) el.srcObject = remoteStream;
-            }} 
-            autoPlay 
-            playsInline 
-            className="hidden"
-          />
+        {/* Invisible Audio Element for Audio Calls */}
+        {remoteStream && !isVideoCall && !isIncoming && (
+          <audio ref={remoteVideoRef as any} autoPlay playsInline />
         )}
+
         {/* Background Blur for Audio or Ringing */}
-        {(!remoteStream || isIncoming) && (
+        {(!remoteStream || isIncoming || !isVideoCall) && (
           <div className="absolute inset-0 z-0">
             <div className="absolute inset-0 bg-gradient-to-br from-primary/30 to-accent/30 animate-pulse" style={{ animationDuration: '3s' }} />
             <div className="absolute inset-0 backdrop-blur-[100px] bg-black/60" />
@@ -78,7 +72,7 @@ export function CallOverlay() {
 
         {/* Header / Caller Info */}
         <div className="relative z-10 flex flex-col items-center pt-24 gap-4">
-          {(!remoteStream || isIncoming) && (
+          {(!remoteStream || isIncoming || !isVideoCall) && (
             <motion.div 
               animate={isIncoming ? { scale: [1, 1.1, 1] } : {}} 
               transition={{ repeat: Infinity, duration: 2 }}
