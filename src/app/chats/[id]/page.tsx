@@ -57,13 +57,12 @@ export default function ChatScreen() {
 
   useEffect(() => {
     if (!db || !partnerId) return;
-    const fetchPartner = async () => {
-      const docSnap = await getDoc(doc(db, "users", partnerId));
+    const unsub = onSnapshot(doc(db, "users", partnerId), (docSnap) => {
       if (docSnap.exists()) {
         setPartner(docSnap.data());
       }
-    };
-    fetchPartner();
+    });
+    return () => unsub();
   }, [partnerId]);
 
   useEffect(() => {

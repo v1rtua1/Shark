@@ -32,6 +32,7 @@ export default function ChatListScreen() {
   
   const [contacts, setContacts] = useState<string[]>([]);
   const [users, setUsers] = useState<ChatUser[]>([]);
+  const [profilePhoto, setProfilePhoto] = useState("");
   
   const router = useRouter();
   const { user: currentUser } = useAuth();
@@ -43,6 +44,7 @@ export default function ChatListScreen() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setContacts(data.contacts || []);
+        if (data.photoURL) setProfilePhoto(data.photoURL);
       }
     });
     return () => unsub();
@@ -130,9 +132,9 @@ export default function ChatListScreen() {
         <h1 className="text-3xl font-bold tracking-tight">Messages</h1>
         <button 
           onClick={() => router.push("/profile")}
-          className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-primary shadow-sm hover:bg-zinc-800 transition-all active:scale-95 overflow-hidden"
+          className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-primary shadow-sm hover:bg-zinc-800 transition-all active:scale-95 overflow-hidden shrink-0"
         >
-          <img src={currentUser?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.displayName}`} alt="Profile" className="w-full h-full object-cover" />
+          <img src={profilePhoto || currentUser?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.displayName}`} alt="Profile" className="w-full h-full object-cover" />
         </button>
       </div>
 
