@@ -4,7 +4,7 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { useAuth } from "@/context/AuthContext";
-import { MessageCircle } from "lucide-react";
+import { Shield, Zap } from "lucide-react";
 
 export default function SplashScreen() {
   const router = useRouter();
@@ -65,18 +65,19 @@ export default function SplashScreen() {
             duration: 1,
             ease: [0.2, 0.8, 0.2, 1],
           }}
-          className="z-10 flex flex-col items-center gap-4"
+          className="z-10 flex flex-col items-center gap-5"
         >
-          <div className="relative flex h-24 w-24 items-center justify-center rounded-3xl bg-gradient-to-tr from-primary to-accent shadow-2xl shadow-primary/30">
-            <MessageCircle className="h-12 w-12 text-white" strokeWidth={2.5} />
+          <div className="relative flex h-28 w-28 items-center justify-center rounded-3xl bg-gradient-to-tr from-primary to-accent shadow-2xl shadow-primary/30 overflow-hidden group">
+            <div className="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all"></div>
+            <Zap className="h-14 w-14 text-white absolute transform -rotate-12" strokeWidth={2} />
           </div>
           <motion.h1
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.4, duration: 0.8 }}
-            className="text-2xl font-bold tracking-tight text-white"
+            initial={{ opacity: 0, y: 10, letterSpacing: "0px" }}
+            animate={{ opacity: 1, y: 0, letterSpacing: "8px" }}
+            transition={{ delay: 0.4, duration: 0.8, ease: "easeOut" }}
+            className="text-4xl font-extrabold tracking-[8px] text-white uppercase ml-2"
           >
-            Chat PWA
+            Shark
           </motion.h1>
         </motion.div>
       </div>
