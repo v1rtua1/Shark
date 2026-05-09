@@ -311,7 +311,7 @@ export default function ChatScreen() {
       </div>
 
       {/* Input Area */}
-      <div className="flex-none w-full p-2 pb-safe-bottom z-30 bg-black/60 backdrop-blur-2xl border-t border-white/5 shrink-0">
+      <div className="flex-none w-full px-2 py-2 pb-safe-bottom z-30 bg-[#09090b]/80 backdrop-blur-3xl border-t border-white/10 shrink-0">
         
         <AnimatePresence>
           {showEmoji && (
@@ -346,7 +346,7 @@ export default function ChatScreen() {
         )}
 
         <form onSubmit={handleSend} className="flex items-end gap-2 relative w-full mx-auto">
-          <div className="flex-1 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-[24px] flex items-center pr-2 pl-2 min-h-[52px] shadow-2xl">
+          <div className="flex-1 bg-white/5 border border-white/10 rounded-full flex items-center pr-1 pl-2 min-h-[44px]">
             <button 
               type="button" 
               onClick={() => setShowEmoji(!showEmoji)}
@@ -374,7 +374,7 @@ export default function ChatScreen() {
                 whileTap={{ scale: 0.95 }}
                 type="submit"
                 disabled={uploadingImage}
-                className="w-[52px] h-[52px] rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white shadow-lg shadow-primary/20 flex-shrink-0 disabled:opacity-50"
+                className="w-[44px] h-[44px] rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white shadow-lg shadow-primary/20 flex-shrink-0 disabled:opacity-50"
               >
                 {uploadingImage ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
@@ -383,7 +383,7 @@ export default function ChatScreen() {
                 )}
               </motion.button>
             ) : (
-               <div className="w-[52px] h-[52px] flex-shrink-0" />
+               <div className="w-[44px] h-[44px] flex-shrink-0" />
             )}
           </AnimatePresence>
         </form>

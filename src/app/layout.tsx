@@ -5,7 +5,6 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CallProvider } from "@/context/CallContext";
 import { CallOverlay } from "@/components/ui/CallOverlay";
-import { SplashScreen } from "@/components/ui/SplashScreen";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -63,7 +62,6 @@ export default function RootLayout({
         />
       </head>
       <body className={`${geistSans.variable} ${geistMono.variable} antialiased min-h-screen bg-black text-white selection:bg-primary/30 flex justify-center fixed inset-0 overflow-hidden`}>
-        <SplashScreen />
         <AuthProvider>
           <CallProvider>
             <ThemeProvider>
