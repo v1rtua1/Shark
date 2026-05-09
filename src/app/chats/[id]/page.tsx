@@ -1,7 +1,7 @@
 "use client";
 
-import { useState, useRef, useEffect, use } from "react";
-import { useRouter } from "next/navigation";
+import { useState, useRef, useEffect } from "react";
+import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { ChevronLeft, MoreVertical, Phone, Send, Paperclip, Smile, Image as ImageIcon, X } from "lucide-react";
 import { MessageBubble } from "@/components/ui/MessageBubble";
@@ -28,8 +28,9 @@ interface Message {
   imageUrl?: string;
 }
 
-export default function ChatScreen({ params }: { params: Promise<{ id: string }> }) {
-  const { id: partnerId } = use(params);
+export default function ChatScreen() {
+  const params = useParams();
+  const partnerId = params.id as string;
   const router = useRouter();
   const { user: currentUser } = useAuth();
   const { startCall } = useCall();
