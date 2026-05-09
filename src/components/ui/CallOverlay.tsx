@@ -47,9 +47,12 @@ export function CallOverlay() {
         exit={{ opacity: 0, scale: 0.95 }}
         className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden"
       >
-        {/* Invisible Audio Element for Audio Calls */}
+        {/* Invisible Audio Elements for Audio Calls */}
         {remoteStream && !isVideoCall && !isIncoming && (
           <audio ref={remoteVideoRef as any} autoPlay playsInline />
+        )}
+        {localStream && !isVideoCall && !isIncoming && (
+          <audio ref={localVideoRef as any} autoPlay playsInline muted />
         )}
 
         {/* Background Blur for Audio or Ringing */}

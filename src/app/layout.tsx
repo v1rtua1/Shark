@@ -65,7 +65,7 @@ export default function RootLayout({
         <AuthProvider>
           <CallProvider>
             <ThemeProvider>
-              <div className="w-full max-w-md mx-auto h-[100dvh] relative bg-background shadow-2xl shadow-black/50 overflow-y-auto overflow-x-hidden flex flex-col scroll-smooth">
+              <div className="w-full max-w-md mx-auto h-[100dvh] relative bg-background shadow-2xl shadow-black/50 overflow-hidden flex flex-col">
                 {children}
                 <CallOverlay />
               </div>
