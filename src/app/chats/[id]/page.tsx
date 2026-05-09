@@ -364,25 +364,23 @@ export default function ChatScreen() {
           </div>
           
           <AnimatePresence>
-            {(input.trim() || imageFile) ? (
+            {(input.trim() || imageFile) && (
               <motion.button
-                initial={{ scale: 0.8, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                exit={{ scale: 0.8, opacity: 0 }}
+                initial={{ scale: 0.8, opacity: 0, width: 0 }}
+                animate={{ scale: 1, opacity: 1, width: 44 }}
+                exit={{ scale: 0.8, opacity: 0, width: 0 }}
                 whileHover={{ scale: 1.05 }}
                 whileTap={{ scale: 0.95 }}
                 type="submit"
                 disabled={uploadingImage}
-                className="w-[44px] h-[44px] rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white shadow-lg shadow-primary/20 flex-shrink-0 disabled:opacity-50"
+                className="h-[44px] rounded-full bg-gradient-to-tr from-primary to-accent flex items-center justify-center text-white shadow-lg shadow-primary/20 flex-shrink-0 disabled:opacity-50 overflow-hidden"
               >
                 {uploadingImage ? (
-                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
+                  <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin shrink-0" />
                 ) : (
-                  <Send className="w-5 h-5 ml-1" />
+                  <Send className="w-5 h-5 ml-1 shrink-0" />
                 )}
               </motion.button>
-            ) : (
-               <div className="w-[44px] h-[44px] flex-shrink-0" />
             )}
           </AnimatePresence>
         </form>
