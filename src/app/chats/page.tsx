@@ -255,44 +255,55 @@ export default function ChatListScreen() {
             initial={{ opacity: 0, y: 10 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ delay: i * 0.05 }}
-            onClick={() => router.push(`/chats/${chat.uid}`)}
-            className="flex items-center gap-4 p-3 rounded-2xl hover:bg-white/5 active:scale-[0.98] transition-all cursor-pointer group"
+            className="relative rounded-2xl overflow-hidden mb-2 bg-red-500"
           >
-            <div className="relative">
-              <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-zinc-800 to-zinc-700 p-[1px]">
-                <div className="w-full h-full rounded-full bg-zinc-900 flex items-center justify-center overflow-hidden shrink-0">
-                   <img src={chat.photoURL} alt={chat.displayName} className="w-full h-full object-cover" />
-                </div>
-              </div>
-              {chat.isOnline && (
-                <div className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-accent-teal border-2 border-background animate-pulse" />
-              )}
+            {/* The delete button revealed on swipe */}
+            <div className="absolute inset-y-0 right-0 w-24 flex items-center justify-end pr-5">
+              <button
+                onClick={(e) => handleDeleteContact(e, chat.uid)}
+                className="text-white hover:scale-110 transition-transform active:scale-95 p-2"
+                aria-label="Delete chat"
+              >
+                <Trash2 className="w-6 h-6" />
+              </button>
             </div>
-            
-            <div className="flex-1 min-w-0">
-              <div className="flex justify-between items-center mb-1">
-                <h3 className="font-medium text-[16px] truncate pr-2 group-hover:text-primary transition-colors">{chat.displayName}</h3>
-                <span className={cn("text-[11px] shrink-0", (chat.unread || 0) > 0 ? "text-primary font-medium" : "text-zinc-500")}>
-                  {chat.time || "New"}
-                </span>
-              </div>
-              <div className="flex justify-between items-center">
-                <p className="text-zinc-400 text-[14px] truncate pr-4">{chat.lastMessage || "Tap to chat securely."}</p>
-                {(chat.unread || 0) > 0 && (
-                  <div className="shrink-0 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white shadow-md shadow-primary/20">
-                    {chat.unread}
+
+            {/* The draggable chat surface */}
+            <motion.div
+              drag="x"
+              dragConstraints={{ left: -80, right: 0 }}
+              dragElastic={0.2}
+              onClick={() => router.push(`/chats/${chat.uid}`)}
+              className="relative z-10 flex items-center gap-4 p-3 bg-[#09090b] rounded-2xl hover:bg-white/5 transition-colors cursor-grab active:cursor-grabbing group"
+            >
+              <div className="relative">
+                <div className="w-14 h-14 rounded-full bg-gradient-to-tr from-zinc-800 to-zinc-700 p-[1px]">
+                  <div className="w-full h-full rounded-full bg-zinc-900 flex items-center justify-center overflow-hidden shrink-0">
+                     <img src={chat.photoURL} alt={chat.displayName} className="w-full h-full object-cover" />
                   </div>
+                </div>
+                {chat.isOnline && (
+                  <div className="absolute bottom-0 right-0 w-4 h-4 rounded-full bg-accent-teal border-2 border-background animate-pulse" />
                 )}
               </div>
-            </div>
-            
-            <button
-              onClick={(e) => handleDeleteContact(e, chat.uid)}
-              className="p-2 shrink-0 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors active:scale-95"
-              aria-label="Delete chat"
-            >
-              <Trash2 className="w-5 h-5" />
-            </button>
+              
+              <div className="flex-1 min-w-0">
+                <div className="flex justify-between items-center mb-1">
+                  <h3 className="font-medium text-[16px] truncate pr-2 group-hover:text-primary transition-colors">{chat.displayName}</h3>
+                  <span className={cn("text-[11px] shrink-0", (chat.unread || 0) > 0 ? "text-primary font-medium" : "text-zinc-500")}>
+                    {chat.time || "New"}
+                  </span>
+                </div>
+                <div className="flex justify-between items-center">
+                  <p className="text-zinc-400 text-[14px] truncate pr-4">{chat.lastMessage || "Tap to chat securely."}</p>
+                  {(chat.unread || 0) > 0 && (
+                    <div className="shrink-0 w-5 h-5 rounded-full bg-primary flex items-center justify-center text-[10px] font-bold text-white shadow-md shadow-primary/20">
+                      {chat.unread}
+                    </div>
+                  )}
+                </div>
+              </div>
+            </motion.div>
           </motion.div>
         ))}
         
