@@ -47,7 +47,17 @@ const CallContext = createContext<CallContextType | undefined>(undefined);
 
 const servers = {
   iceServers: [
-    { urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"] }
+    { urls: ["stun:stun1.l.google.com:19302", "stun:stun2.l.google.com:19302"] },
+    {
+      urls: "turn:openrelay.metered.ca:80",
+      username: "openrelayproject",
+      credential: "openrelayproject"
+    },
+    {
+      urls: "turn:openrelay.metered.ca:443",
+      username: "openrelayproject",
+      credential: "openrelayproject"
+    }
   ]
 };
 
@@ -110,8 +120,15 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     const peerConnection = new RTCPeerConnection(servers);
     
     peerConnection.ontrack = (event) => {
-      const [stream] = event.streams;
-      setRemoteStream(stream);
+      setRemoteStream(prevStream => {
+        if (event.streams && event.streams[0]) {
+          return event.streams[0];
+        }
+        // Fallback for browsers that don't support event.streams well
+        const stream = prevStream || new MediaStream();
+        stream.addTrack(event.track);
+        return stream;
+      });
     };
 
     pc.current = peerConnection;
