@@ -25,10 +25,10 @@ export const MessageBubble = memo(function MessageBubble({ content, isOwn, times
     >
       <div
         className={cn(
-          "max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-3xl relative overflow-hidden flex flex-col min-w-0",
+          "max-w-[85%] sm:max-w-[75%] px-4 py-3 rounded-[24px] relative overflow-hidden flex flex-col min-w-0 shadow-xl transition-all",
           isOwn
-            ? "bg-gradient-to-br from-primary to-accent text-white rounded-br-sm shadow-md shadow-primary/20"
-            : "glass text-foreground rounded-bl-sm"
+            ? "bg-gradient-to-br from-primary to-accent text-white rounded-br-[4px] shadow-primary/20"
+            : "bg-white/10 backdrop-blur-md border border-white/10 text-foreground rounded-bl-[4px] shadow-black/20"
         )}
       >
         {imageUrl && (

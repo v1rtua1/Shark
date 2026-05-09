@@ -232,9 +232,13 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
   };
 
   return (
-    <PageTransition className={cn("flex flex-col h-[100dvh] w-full overflow-hidden relative", bgStyles[background])}>
-      {/* Header */}
-      <div className="flex-none pt-safe-top pb-4 px-4 glass-panel z-20 flex items-center justify-between shadow-sm">
+    <PageTransition className="flex flex-col h-[100dvh] w-full overflow-hidden relative bg-black">
+      {/* Background Glows */}
+      <div className="absolute top-0 left-0 w-full h-[30vh] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
+      <div className="absolute bottom-0 right-0 w-full h-[30vh] bg-gradient-to-t from-accent/10 to-transparent pointer-events-none" />
+
+      {/* Floating Header */}
+      <div className="absolute top-0 left-0 right-0 pt-safe-top pb-3 px-4 z-30 flex items-center justify-between bg-black/60 backdrop-blur-2xl border-b border-white/5 shadow-xl">
         <div className="flex items-center gap-3">
           <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors">
             <ChevronLeft className="w-6 h-6" />
@@ -260,7 +264,7 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
       </div>
 
       {/* Messages Area */}
-      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 py-6 scroll-smooth overscroll-none">
+      <div className="flex-1 overflow-y-auto overflow-x-hidden w-full px-4 pt-24 pb-28 scroll-smooth overscroll-none z-10">
         <div className="flex flex-col justify-end min-h-full">
           <AnimatePresence initial={false}>
             {messages.map((msg) => (
@@ -293,8 +297,8 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
         </div>
       </div>
 
-      {/* Input Area */}
-      <div className="flex-none w-full max-w-full p-4 pb-safe-bottom glass-panel z-20 shrink-0">
+      {/* Floating Input Area */}
+      <div className="absolute bottom-0 left-0 right-0 w-full p-4 pb-safe-bottom z-30 bg-gradient-to-t from-black via-black/90 to-transparent">
         
         <AnimatePresence>
           {showEmoji && (
@@ -328,8 +332,8 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
           </div>
         )}
 
-        <form onSubmit={handleSend} className="flex items-end gap-2 relative">
-          <div className="flex-1 bg-zinc-900/60 border border-zinc-800 rounded-3xl flex items-center pr-2 pl-4 min-h-[52px]">
+        <form onSubmit={handleSend} className="flex items-end gap-2 relative max-w-md mx-auto">
+          <div className="flex-1 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-[24px] flex items-center pr-2 pl-4 min-h-[52px] shadow-2xl">
             <button 
               type="button" 
               onClick={() => setShowEmoji(!showEmoji)}
@@ -342,22 +346,9 @@ export default function ChatScreen({ params }: { params: Promise<{ id: string }>
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Message..."
-              className="flex-1 bg-transparent border-none focus:outline-none px-2 py-3 text-[15px]"
+              className="flex-1 bg-transparent border-none focus:outline-none px-2 py-3 text-[15px] placeholder:text-zinc-500"
             />
-            <input 
-              type="file" 
-              accept="image/*" 
-              className="hidden" 
-              ref={fileInputRef}
-              onChange={handleImageSelect}
-            />
-            <button 
-              type="button" 
-              onClick={() => fileInputRef.current?.click()}
-              className="text-zinc-400 hover:text-white p-2 transition-colors"
-            >
-              <ImageIcon className="w-5 h-5" />
-            </button>
+            {/* Disabled attachments since Storage requires billing */}
           </div>
           
           <AnimatePresence>

@@ -7,7 +7,7 @@ import { GlassPanel } from "@/components/ui/GlassPanel";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
-import { Lock, Mail, Check } from "lucide-react";
+import { Lock, Mail, Check, Zap } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
 
 export default function AuthScreen() {
@@ -88,13 +88,12 @@ export default function AuthScreen() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center mb-10"
         >
-          <div className="w-20 h-20 mx-auto mb-6 rounded-3xl bg-gradient-to-tr from-primary to-accent p-[2px] shadow-2xl shadow-primary/20">
-            <div className="w-full h-full bg-black rounded-3xl flex items-center justify-center">
-              <Lock className="w-8 h-8 text-white" />
-            </div>
+          <div className="relative flex h-24 w-24 mx-auto mb-6 items-center justify-center rounded-3xl bg-gradient-to-tr from-primary to-accent shadow-2xl shadow-primary/30 overflow-hidden group">
+            <div className="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all"></div>
+            <Zap className="h-12 w-12 text-white absolute transform -rotate-12" strokeWidth={2} />
           </div>
-          <h1 className="text-3xl font-bold tracking-tight text-white mb-2">Secure Portal</h1>
-          <p className="text-zinc-400 text-sm">Enter your credentials to access the encrypted network.</p>
+          <h1 className="text-3xl font-extrabold tracking-[6px] text-white uppercase mb-2">SHARK</h1>
+          <p className="text-zinc-400 text-sm">Enter your credentials to access the secure network.</p>
         </motion.div>
 
         <motion.div
