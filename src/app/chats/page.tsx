@@ -32,6 +32,7 @@ export default function ChatListScreen() {
   
   const [contacts, setContacts] = useState<string[]>([]);
   const [users, setUsers] = useState<ChatUser[]>([]);
+  const [currentUserData, setCurrentUserData] = useState<any>(null);
   const [isLoadingChats, setIsLoadingChats] = useState(true);
   const [profilePhoto, setProfilePhoto] = useState(() => {
     if (typeof window !== "undefined") {
@@ -50,6 +51,7 @@ export default function ChatListScreen() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setContacts(data.contacts || []);
+        setCurrentUserData(data);
         if (data.photoURL) {
           setProfilePhoto(data.photoURL);
           localStorage.setItem("shark_avatar", data.photoURL);
@@ -134,7 +136,16 @@ export default function ChatListScreen() {
 
   const filteredChats = users
     .filter(u => contacts.includes(u.uid))
-    .filter(u => (u.displayName || "").toLowerCase().includes(search.toLowerCase()));
+    .filter(u => (u.displayName || "").toLowerCase().includes(search.toLowerCase()))
+    .map(u => {
+      const chatData = currentUserData?.chatsData?.[u.uid] || {};
+      return {
+        ...u,
+        lastMessage: chatData.lastMessage || u.lastMessage,
+        time: chatData.time || u.time,
+        unread: chatData.unread || 0
+      };
+    });
 
   return (
     <PageTransition className="p-4 pt-12 pb-6 min-h-screen">

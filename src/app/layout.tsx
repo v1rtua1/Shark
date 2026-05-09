@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "@/context/ThemeContext";
 import { CallProvider } from "@/context/CallContext";
 import { CallOverlay } from "@/components/ui/CallOverlay";
+import { NotificationManager } from "@/components/NotificationManager";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -68,6 +69,7 @@ export default function RootLayout({
               <div className="w-full max-w-md mx-auto h-[100dvh] relative bg-background shadow-2xl shadow-black/50 overflow-y-auto overflow-x-hidden flex flex-col scroll-smooth">
                 {children}
                 <CallOverlay />
+                <NotificationManager />
               </div>
             </ThemeProvider>
           </CallProvider>

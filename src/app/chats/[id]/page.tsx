@@ -10,7 +10,7 @@ import { useAuth } from "@/context/AuthContext";
 import { useCall } from "@/context/CallContext";
 import { cn } from "@/lib/utils";
 import { db, storage } from "@/lib/firebase";
-import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, getDoc, setDoc, deleteDoc } from "firebase/firestore";
+import { collection, query, orderBy, onSnapshot, addDoc, serverTimestamp, doc, getDoc, setDoc, deleteDoc, updateDoc, increment } from "firebase/firestore";
 import { ref, uploadBytes, getDownloadURL } from "firebase/storage";
 import EmojiPicker, { Theme } from "emoji-picker-react";
 import { useTheme } from "@/context/ThemeContext";
@@ -161,6 +161,15 @@ export default function ChatScreen() {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, isPartnerTyping]);
 
+  // Clear unread count when viewing chat
+  useEffect(() => {
+    if (!currentUser || !partnerId || !db) return;
+    const myRef = doc(db, "users", currentUser.uid);
+    updateDoc(myRef, {
+      [`chatsData.${partnerId}.unread`]: 0
+    }).catch(() => {}); // ignore errors if field doesn't exist yet
+  }, [currentUser, partnerId, messages.length]);
+
   // Handle local typing state to update Firestore
   useEffect(() => {
     if (!currentUser || !db) return;
@@ -225,6 +234,28 @@ export default function ChatScreen() {
       createdAt: serverTimestamp(),
       ...(imageUrl && { imageUrl })
     });
+
+    try {
+      const displayMsg = imageUrl ? "Sent an image" : text;
+      const timeStr = new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+
+      // Update partner's chatsData
+      const partnerRef = doc(db, "users", partnerId);
+      await updateDoc(partnerRef, {
+        [`chatsData.${currentUser.uid}.lastMessage`]: displayMsg,
+        [`chatsData.${currentUser.uid}.time`]: timeStr,
+        [`chatsData.${currentUser.uid}.unread`]: increment(1)
+      });
+
+      // Update my chatsData
+      const myRef = doc(db, "users", currentUser.uid);
+      await updateDoc(myRef, {
+        [`chatsData.${partnerId}.lastMessage`]: displayMsg,
+        [`chatsData.${partnerId}.time`]: timeStr
+      });
+    } catch (err) {
+      console.error("Error updating chat metadata:", err);
+    }
   };
 
   const bgStyles = {
