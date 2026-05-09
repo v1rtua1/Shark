@@ -88,9 +88,8 @@ export default function AuthScreen() {
           transition={{ duration: 0.6, ease: "easeOut" }}
           className="text-center mb-10"
         >
-          <div className="relative flex h-24 w-24 mx-auto mb-6 items-center justify-center rounded-3xl bg-gradient-to-tr from-primary to-accent shadow-2xl shadow-primary/30 overflow-hidden group">
-            <div className="absolute inset-0 bg-white/20 blur-xl group-hover:bg-white/30 transition-all"></div>
-            <Zap className="h-12 w-12 text-white absolute transform -rotate-12" strokeWidth={2} />
+          <div className="relative flex h-24 w-24 mx-auto mb-6 items-center justify-center rounded-3xl shadow-[0_0_40px_rgba(20,184,166,0.3)] overflow-hidden group">
+            <img src="/icon-512x512.png" alt="Shark Logo" className="w-full h-full object-cover" />
           </div>
           <h1 className="text-3xl font-extrabold tracking-[6px] text-white uppercase mb-2">SHARK</h1>
           <p className="text-zinc-400 text-sm">Enter your credentials to access the secure network.</p>
