@@ -31,6 +31,7 @@ export default function ProfileScreen() {
   // Notification States
   const [pushEnabled, setPushEnabled] = useState(false);
   const [soundEnabled, setSoundEnabled] = useState(true);
+  const [profilePhoto, setProfilePhoto] = useState(user?.photoURL || "");
 
   // Toast State
   const [showToast, setShowToast] = useState(false);
@@ -54,6 +55,7 @@ export default function ProfileScreen() {
           if (data.disappearingMessages) setDisappearingMessages(data.disappearingMessages);
           if (data.pushEnabled !== undefined) setPushEnabled(data.pushEnabled);
           if (data.soundEnabled !== undefined) setSoundEnabled(data.soundEnabled);
+          if (data.photoURL) setProfilePhoto(data.photoURL);
         }
       });
       return () => unsub();
@@ -106,10 +108,9 @@ export default function ProfileScreen() {
           const base64Url = canvas.toDataURL('image/jpeg', 0.6); // Compress hard to save DB space
 
           try {
-            await updateProfile(user, { photoURL: base64Url });
+            // ONLY update Firestore, do NOT update Firebase Auth profile to avoid base64 length limits
             await setDoc(doc(db, "users", user.uid), { photoURL: base64Url }, { merge: true });
             showSuccessToast("Slika uspesno sacuvana!");
-            setTimeout(() => window.location.reload(), 1000);
           } catch (err) {
             console.error(err);
             showSuccessToast("Greška pri pamćenju slike.");
@@ -243,7 +244,7 @@ export default function ProfileScreen() {
         <div className="relative mb-4">
           <div className="w-24 h-24 rounded-full bg-gradient-to-tr from-primary to-accent p-1 shadow-xl shadow-primary/20 relative group">
             <div className="w-full h-full rounded-full bg-zinc-900 flex items-center justify-center overflow-hidden">
-               <img src={user?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.displayName}`} alt="Profile" className="w-20 h-20 object-cover" />
+               <img src={profilePhoto || `https://api.dicebear.com/7.x/avataaars/svg?seed=${user?.displayName}`} alt="Profile" className="w-full h-full object-cover" />
             </div>
             
             <button 

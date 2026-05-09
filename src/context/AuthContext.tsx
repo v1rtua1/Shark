@@ -43,6 +43,38 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     return () => unsubscribe();
   }, []);
 
+  // Presence logic
+  useEffect(() => {
+    if (!user || !db) return;
+
+    const userRef = doc(db, "users", user.uid);
+    
+    const setOnline = async () => await setDoc(userRef, { isOnline: true, lastSeen: new Date().toISOString() }, { merge: true }).catch(() => {});
+    const setOffline = async () => await setDoc(userRef, { isOnline: false, lastSeen: new Date().toISOString() }, { merge: true }).catch(() => {});
+
+    setOnline();
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        setOnline();
+      } else {
+        setOffline();
+      }
+    };
+
+    const handleBeforeUnload = () => {
+      setOffline();
+    };
+
+    document.addEventListener("visibilitychange", handleVisibilityChange);
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => {
+      document.removeEventListener("visibilitychange", handleVisibilityChange);
+      window.removeEventListener("beforeunload", handleBeforeUnload);
+    };
+  }, [user]);
+
   const login = async (email: string, pass: string) => {
     if (!auth) return;
     await signInWithEmailAndPassword(auth, email, pass);
@@ -68,7 +100,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   const logout = async () => {
-    if (!auth) return;
+    if (!auth || !user || !db) return;
+    await setDoc(doc(db, "users", user.uid), { isOnline: false, lastSeen: new Date().toISOString() }, { merge: true }).catch(() => {});
     await signOut(auth);
   };
 
