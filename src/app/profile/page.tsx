@@ -71,23 +71,55 @@ export default function ProfileScreen() {
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !user || !storage || !db) return;
+    if (!file || !user || !db) return;
 
     setUploadingImage(true);
     try {
-      const imageRef = ref(storage, `profiles/${user.uid}/${Date.now()}_${file.name}`);
-      await uploadBytes(imageRef, file);
-      const url = await getDownloadURL(imageRef);
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = (event) => {
+        const img = new Image();
+        img.src = event.target?.result as string;
+        img.onload = async () => {
+          const canvas = document.createElement('canvas');
+          const MAX_SIZE = 200;
+          let width = img.width;
+          let height = img.height;
 
-      await updateProfile(user, { photoURL: url });
-      await updateDoc(doc(db, "users", user.uid), { photoURL: url });
-      
-      // Force reload to show new image
-      window.location.reload();
+          if (width > height) {
+            if (width > MAX_SIZE) {
+              height *= MAX_SIZE / width;
+              width = MAX_SIZE;
+            }
+          } else {
+            if (height > MAX_SIZE) {
+              width *= MAX_SIZE / height;
+              height = MAX_SIZE;
+            }
+          }
+
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx?.drawImage(img, 0, 0, width, height);
+          
+          const base64Url = canvas.toDataURL('image/jpeg', 0.6); // Compress hard to save DB space
+
+          try {
+            await updateProfile(user, { photoURL: base64Url });
+            await setDoc(doc(db, "users", user.uid), { photoURL: base64Url }, { merge: true });
+            showSuccessToast("Slika uspesno sacuvana!");
+            setTimeout(() => window.location.reload(), 1000);
+          } catch (err) {
+            console.error(err);
+            showSuccessToast("Greška pri pamćenju slike.");
+            setUploadingImage(false);
+          }
+        };
+      };
     } catch (err) {
-      console.error("Failed to upload image", err);
-      alert("Failed to upload image.");
-    } finally {
+      console.error("Failed to process image", err);
+      showSuccessToast("Greška pri učitavanju fajla.");
       setUploadingImage(false);
     }
   };
