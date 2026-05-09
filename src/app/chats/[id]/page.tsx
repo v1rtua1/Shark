@@ -30,7 +30,7 @@ interface Message {
 
 export default function ChatScreen() {
   const params = useParams();
-  const partnerId = params.id as string;
+  const partnerId = (params?.id as string) || "";
   const router = useRouter();
   const { user: currentUser } = useAuth();
   const { startCall } = useCall();
@@ -55,9 +55,9 @@ export default function ChatScreen() {
   };
 
   useEffect(() => {
-    if (!db) return;
+    if (!db || !partnerId) return;
     const fetchPartner = async () => {
-      const docSnap = await getDoc(doc(db!, "users", partnerId));
+      const docSnap = await getDoc(doc(db, "users", partnerId));
       if (docSnap.exists()) {
         setPartner(docSnap.data());
       }

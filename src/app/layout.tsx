@@ -46,6 +46,21 @@ export default function RootLayout({
       lang="en"
       className={`${geistSans.variable} ${geistMono.variable} h-[100dvh] antialiased dark`}
     >
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              if ('serviceWorker' in navigator) {
+                navigator.serviceWorker.getRegistrations().then(function(registrations) {
+                  for(let registration of registrations) {
+                    registration.unregister();
+                  }
+                });
+              }
+            `,
+          }}
+        />
+      </head>
       <body className="h-[100dvh] w-full flex flex-col bg-background text-foreground overscroll-none selection:bg-primary/30 overflow-hidden fixed inset-0">
         <AuthProvider>
           <CallProvider>
