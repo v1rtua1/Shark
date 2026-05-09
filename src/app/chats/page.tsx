@@ -77,16 +77,23 @@ export default function ChatListScreen() {
     setAddMessage("");
 
     try {
-      const q = query(collection(db, "users"), where("email", "==", contactEmail.toLowerCase()));
-      const snap = await getDocs(q);
+      let targetUser = null;
+      let snap = await getDocs(query(collection(db, "users"), where("email", "==", contactEmail)));
       
-      if (snap.empty) {
+      if (!snap.empty) {
+        targetUser = snap.docs[0].data();
+      } else {
+        snap = await getDocs(query(collection(db, "users"), where("email", "==", contactEmail.toLowerCase())));
+        if (!snap.empty) {
+          targetUser = snap.docs[0].data();
+        }
+      }
+      
+      if (!targetUser) {
         setAddStatus("error");
-        setAddMessage("User not found.");
+        setAddMessage("User not found in database.");
         return;
       }
-
-      const targetUser = snap.docs[0].data();
       
       // Update my contacts
       await updateDoc(doc(db, "users", currentUser.uid), {

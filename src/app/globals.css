@@ -61,6 +61,11 @@ html, body {
   overscroll-behavior: none;
   /* Prevent text selection highlight on tap */
   -webkit-tap-highlight-color: transparent;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   height: 100dvh;
   width: 100vw;
   overflow: hidden;

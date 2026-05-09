@@ -7,8 +7,8 @@ import { GlassPanel } from "@/components/ui/GlassPanel";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
-import { Lock, Mail } from "lucide-react";
-import { motion } from "framer-motion";
+import { Lock, Mail, Check } from "lucide-react";
+import { motion, AnimatePresence } from "framer-motion";
 
 export default function AuthScreen() {
   const [email, setEmail] = useState("");
@@ -17,6 +17,7 @@ export default function AuthScreen() {
   const [username, setUsername] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState("");
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
   
   const router = useRouter();
   const { login, register } = useAuth();
@@ -34,10 +35,16 @@ export default function AuthScreen() {
     try {
       if (isRegister) {
         await register(email, password, username);
+        setToastMessage("Uspešno ste se registrovali!");
       } else {
         await login(email, password);
+        setToastMessage("Uspešna prijava!");
       }
-      router.push("/chats");
+      
+      // Delay to show the toast before redirecting
+      setTimeout(() => {
+        router.push("/chats");
+      }, 1200);
     } catch (err: any) {
       setError(err.message || "Authentication failed");
     } finally {
@@ -46,7 +53,22 @@ export default function AuthScreen() {
   };
 
   return (
-    <PageTransition className="flex items-center justify-center min-h-screen p-4 relative overflow-hidden bg-black">
+    <PageTransition className="flex items-center justify-center h-[100dvh] w-full p-4 relative overflow-hidden bg-black fixed inset-0">
+      <AnimatePresence>
+        {toastMessage && (
+          <motion.div
+            initial={{ opacity: 0, y: -20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: -20, scale: 0.95 }}
+            className="fixed top-6 left-1/2 -translate-x-1/2 z-[100] px-4 py-3 rounded-full bg-black/80 backdrop-blur-md border border-white/10 shadow-2xl flex items-center gap-3 w-[90%] max-w-sm"
+          >
+            <div className="w-6 h-6 rounded-full bg-accent-teal/20 flex items-center justify-center shrink-0">
+              <Check className="w-3 h-3 text-accent-teal" />
+            </div>
+            <p className="text-sm font-medium text-white">{toastMessage}</p>
+          </motion.div>
+        )}
+      </AnimatePresence>
       
       {/* Modern Abstract Background */}
       <div className="fixed inset-0 pointer-events-none">
