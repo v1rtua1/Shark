@@ -53,7 +53,6 @@ export function CallOverlay() {
   if (!currentCall) return null;
 
   const isIncoming = currentCall.status === "ringing";
-  const isVideoCall = currentCall.type === "video";
 
   return (
     <AnimatePresence>
