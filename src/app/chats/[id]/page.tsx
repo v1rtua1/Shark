@@ -235,15 +235,15 @@ export default function ChatScreen() {
   };
 
   return (
-    <PageTransition className="flex flex-col h-[100dvh] w-full overflow-hidden relative bg-black">
+    <PageTransition className="absolute inset-0 flex flex-col h-[100dvh] w-full overflow-hidden bg-black z-50">
       {/* Background Glows */}
       <div className="absolute top-0 left-0 w-full h-[30vh] bg-gradient-to-b from-primary/10 to-transparent pointer-events-none" />
       <div className="absolute bottom-0 right-0 w-full h-[30vh] bg-gradient-to-t from-accent/10 to-transparent pointer-events-none" />
 
       {/* Header */}
-      <div className="flex-none pt-safe-top pb-3 px-4 z-30 flex items-center justify-between bg-black/60 backdrop-blur-2xl border-b border-white/5 shadow-xl shrink-0">
-        <div className="flex items-center gap-3">
-          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors">
+      <div className="flex-none pt-safe-top pb-3 px-4 z-30 flex items-center justify-between bg-black/60 backdrop-blur-2xl border-b border-white/5 shadow-xl shrink-0 gap-2">
+        <div className="flex items-center gap-3 flex-1 min-w-0">
+          <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors shrink-0">
             <ChevronLeft className="w-6 h-6" />
           </button>
           <div className="flex items-center gap-3">
@@ -358,7 +358,7 @@ export default function ChatScreen() {
               value={input}
               onChange={(e) => setInput(e.target.value)}
               placeholder="Message..."
-              className="flex-1 bg-transparent border-none focus:outline-none px-2 py-3 text-[15px] placeholder:text-zinc-500"
+              className="flex-1 bg-transparent border-none focus:outline-none px-2 py-3 text-[16px] placeholder:text-zinc-500"
             />
             {/* Disabled attachments since Storage requires billing */}
           </div>
