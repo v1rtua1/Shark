@@ -311,7 +311,7 @@ export default function ChatScreen() {
       </div>
 
       {/* Input Area */}
-      <div className="flex-none w-full p-4 pb-safe-bottom z-30 bg-black/60 backdrop-blur-2xl border-t border-white/5 shrink-0">
+      <div className="flex-none w-full p-2 pb-safe-bottom z-30 bg-black/60 backdrop-blur-2xl border-t border-white/5 shrink-0">
         
         <AnimatePresence>
           {showEmoji && (
@@ -345,8 +345,8 @@ export default function ChatScreen() {
           </div>
         )}
 
-        <form onSubmit={handleSend} className="flex items-end gap-2 relative max-w-md mx-auto">
-          <div className="flex-1 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-[24px] flex items-center pr-2 pl-4 min-h-[52px] shadow-2xl">
+        <form onSubmit={handleSend} className="flex items-end gap-2 relative w-full mx-auto">
+          <div className="flex-1 bg-white/10 backdrop-blur-3xl border border-white/10 rounded-[24px] flex items-center pr-2 pl-2 min-h-[52px] shadow-2xl">
             <button 
               type="button" 
               onClick={() => setShowEmoji(!showEmoji)}
