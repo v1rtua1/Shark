@@ -310,7 +310,7 @@ export default function ChatScreen() {
       </div>
 
       {/* Input Area */}
-      <div className="flex-none w-full px-2 py-2 pb-safe-bottom z-30 bg-[#09090b]/80 backdrop-blur-3xl border-t border-white/10 shrink-0">
+      <div className="flex-none w-full px-2 pt-2 pb-[calc(env(safe-area-inset-bottom)+8px)] z-30 bg-[#09090b]/80 backdrop-blur-3xl border-t border-white/10 shrink-0">
         
         <AnimatePresence>
           {showEmoji && (
