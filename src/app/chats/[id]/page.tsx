@@ -45,6 +45,7 @@ export default function ChatScreen() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const [imageFile, setImageFile] = useState<File | null>(null);
   const [currentUserData, setCurrentUserData] = useState<any>(null);
+  const [showPartnerProfile, setShowPartnerProfile] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -246,7 +247,10 @@ export default function ChatScreen() {
           <button onClick={() => router.back()} className="p-2 -ml-2 rounded-full hover:bg-white/10 transition-colors shrink-0">
             <ChevronLeft className="w-6 h-6" />
           </button>
-          <div className="flex items-center gap-3">
+          <div 
+            className="flex items-center gap-3 cursor-pointer"
+            onClick={() => setShowPartnerProfile(true)}
+          >
             <div className="w-10 h-10 rounded-full bg-zinc-800 overflow-hidden shrink-0">
                <img src={partner?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partnerId}`} alt="Avatar" className="w-full h-full object-cover" />
             </div>
@@ -268,9 +272,6 @@ export default function ChatScreen() {
             className="p-2 rounded-full hover:bg-white/10 transition-colors text-zinc-400"
           >
             <Video className="w-5 h-5" />
-          </button>
-          <button className="p-2 rounded-full hover:bg-white/10 transition-colors text-zinc-400">
-            <MoreVertical className="w-5 h-5" />
           </button>
         </div>
       </div>
@@ -387,6 +388,59 @@ export default function ChatScreen() {
           </AnimatePresence>
         </form>
       </div>
+
+      {/* Partner Profile Modal */}
+      <AnimatePresence>
+        {showPartnerProfile && (
+          <motion.div 
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-[100] bg-black/90 backdrop-blur-xl flex flex-col items-center justify-center p-6"
+          >
+            <button 
+              onClick={() => setShowPartnerProfile(false)}
+              className="absolute top-safe-top right-4 p-3 bg-white/10 rounded-full hover:bg-white/20 transition-colors"
+            >
+              <X className="w-6 h-6 text-white" />
+            </button>
+            
+            <motion.div 
+              initial={{ scale: 0.9, y: 20 }}
+              animate={{ scale: 1, y: 0 }}
+              exit={{ scale: 0.9, y: 20 }}
+              className="w-full max-w-sm flex flex-col items-center"
+            >
+              <div className="w-48 h-48 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl mb-6">
+                <img 
+                  src={partner?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${partnerId}`} 
+                  alt="Avatar Enlarged" 
+                  className="w-full h-full object-cover" 
+                />
+              </div>
+              
+              <h2 className="text-3xl font-bold text-white text-center break-words w-full px-4">{partner?.displayName || "Unknown"}</h2>
+              <p className="text-zinc-400 mt-2 text-lg text-center break-words w-full px-4">{partner?.email || "No email available"}</p>
+              
+              <div className="mt-8 flex gap-4">
+                <button 
+                  onClick={() => { setShowPartnerProfile(false); startCall(partnerId, partner?.displayName || "Unknown", partner?.photoURL || "", "audio"); }}
+                  className="w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                >
+                  <Phone className="w-7 h-7" />
+                </button>
+                <button 
+                  onClick={() => { setShowPartnerProfile(false); startCall(partnerId, partner?.displayName || "Unknown", partner?.photoURL || "", "video"); }}
+                  className="w-16 h-16 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white"
+                >
+                  <Video className="w-7 h-7" />
+                </button>
+              </div>
+            </motion.div>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
     </PageTransition>
   );
 }

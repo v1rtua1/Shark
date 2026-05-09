@@ -1,8 +1,8 @@
 "use client";
 
-import React, { useEffect, useRef } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Phone, PhoneOff, Mic, MicOff, Video, VideoOff } from "lucide-react";
+import { Phone, PhoneOff, Mic, MicOff, Video, VideoOff, Volume2, VolumeX } from "lucide-react";
 import { useCall } from "@/context/CallContext";
 
 export function CallOverlay() {
@@ -23,6 +23,8 @@ export function CallOverlay() {
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
   const remoteAudioRef = useRef<HTMLAudioElement>(null);
   const localAudioRef = useRef<HTMLAudioElement>(null);
+  
+  const [isSpeakerMode, setIsSpeakerMode] = useState(true);
 
   const isVideoCall = currentCall?.type === "video";
 
@@ -142,6 +144,14 @@ export function CallOverlay() {
             </>
           ) : (
             <>
+              {/* Speaker Toggle */}
+              <button 
+                onClick={() => setIsSpeakerMode(!isSpeakerMode)}
+                className={`w-14 h-14 rounded-full flex items-center justify-center text-white shadow-xl transition-all active:scale-95 ${!isSpeakerMode ? 'bg-white text-black' : 'bg-white/20 backdrop-blur-md border border-white/10 hover:bg-white/30'}`}
+              >
+                {!isSpeakerMode ? <VolumeX className="w-6 h-6" /> : <Volume2 className="w-6 h-6" />}
+              </button>
+
               {/* Mute Button */}
               <button 
                 onClick={toggleMute}
