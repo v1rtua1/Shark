@@ -3,7 +3,7 @@
 import { useState, useRef, useEffect } from "react";
 import { useRouter, useParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { ChevronLeft, MoreVertical, Phone, Send, Paperclip, Smile, Image as ImageIcon, X } from "lucide-react";
+import { ChevronLeft, MoreVertical, Phone, Video, Send, Paperclip, Smile, Image as ImageIcon, X } from "lucide-react";
 import { MessageBubble } from "@/components/ui/MessageBubble";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { useAuth } from "@/context/AuthContext";
