@@ -32,7 +32,13 @@ export default function ChatListScreen() {
   
   const [contacts, setContacts] = useState<string[]>([]);
   const [users, setUsers] = useState<ChatUser[]>([]);
-  const [profilePhoto, setProfilePhoto] = useState("");
+  const [isLoadingChats, setIsLoadingChats] = useState(true);
+  const [profilePhoto, setProfilePhoto] = useState(() => {
+    if (typeof window !== "undefined") {
+      return localStorage.getItem("shark_avatar") || "";
+    }
+    return "";
+  });
   
   const router = useRouter();
   const { user: currentUser } = useAuth();
@@ -44,7 +50,10 @@ export default function ChatListScreen() {
       if (docSnap.exists()) {
         const data = docSnap.data();
         setContacts(data.contacts || []);
-        if (data.photoURL) setProfilePhoto(data.photoURL);
+        if (data.photoURL) {
+          setProfilePhoto(data.photoURL);
+          localStorage.setItem("shark_avatar", data.photoURL);
+        }
       }
     });
     return () => unsub();
@@ -61,6 +70,7 @@ export default function ChatListScreen() {
         usersData.push(doc.data() as ChatUser);
       });
       setUsers(usersData);
+      setIsLoadingChats(false);
     });
     return () => unsubscribe();
   }, [currentUser]);
@@ -134,7 +144,7 @@ export default function ChatListScreen() {
           onClick={() => router.push("/profile")}
           className="w-10 h-10 rounded-full bg-zinc-900 border border-zinc-800 flex items-center justify-center text-primary shadow-sm hover:bg-zinc-800 transition-all active:scale-95 overflow-hidden shrink-0"
         >
-          <img src={profilePhoto || currentUser?.photoURL || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.displayName}`} alt="Profile" className="w-full h-full object-cover" />
+          <img src={profilePhoto || `https://api.dicebear.com/7.x/avataaars/svg?seed=${currentUser?.displayName}`} alt="Profile" className="w-full h-full object-cover" />
         </button>
       </div>
 
@@ -245,7 +255,20 @@ export default function ChatListScreen() {
             </div>
           </motion.div>
         ))}
-        {filteredChats.length === 0 && !showAddContact && (
+        
+        {isLoadingChats ? (
+          <div className="space-y-2 mt-4">
+            {[1, 2, 3].map(i => (
+              <div key={i} className="flex items-center gap-4 p-3 rounded-2xl bg-white/5 animate-pulse">
+                 <div className="w-14 h-14 rounded-full bg-white/10 shrink-0" />
+                 <div className="flex-1 space-y-2">
+                   <div className="h-4 bg-white/10 rounded w-1/3" />
+                   <div className="h-3 bg-white/10 rounded w-2/3" />
+                 </div>
+              </div>
+            ))}
+          </div>
+        ) : filteredChats.length === 0 && !showAddContact && (
           <div className="text-center text-zinc-500 mt-10 p-6 glass-panel rounded-2xl">
             <UserPlus className="w-12 h-12 mx-auto mb-3 opacity-20" />
             <p className="font-medium text-white mb-1">No secure contacts</p>
