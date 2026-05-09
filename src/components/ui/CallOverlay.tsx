@@ -21,18 +21,34 @@ export function CallOverlay() {
 
   const localVideoRef = useRef<HTMLVideoElement>(null);
   const remoteVideoRef = useRef<HTMLVideoElement>(null);
+  const remoteAudioRef = useRef<HTMLAudioElement>(null);
+  const localAudioRef = useRef<HTMLAudioElement>(null);
+
+  const isVideoCall = currentCall?.type === "video";
 
   useEffect(() => {
-    if (localVideoRef.current && localStream) {
-      localVideoRef.current.srcObject = localStream;
+    if (localStream) {
+      if (isVideoCall && localVideoRef.current) {
+        localVideoRef.current.srcObject = localStream;
+        localVideoRef.current.play().catch(e => console.log("Play failed", e));
+      } else if (!isVideoCall && localAudioRef.current) {
+        localAudioRef.current.srcObject = localStream;
+        localAudioRef.current.play().catch(e => console.log("Play failed", e));
+      }
     }
-  }, [localStream, currentCall?.status]);
+  }, [localStream, currentCall?.status, isVideoCall]);
 
   useEffect(() => {
-    if (remoteVideoRef.current && remoteStream) {
-      remoteVideoRef.current.srcObject = remoteStream;
+    if (remoteStream) {
+      if (isVideoCall && remoteVideoRef.current) {
+        remoteVideoRef.current.srcObject = remoteStream;
+        remoteVideoRef.current.play().catch(e => console.log("Play failed", e));
+      } else if (!isVideoCall && remoteAudioRef.current) {
+        remoteAudioRef.current.srcObject = remoteStream;
+        remoteAudioRef.current.play().catch(e => console.log("Play failed", e));
+      }
     }
-  }, [remoteStream, currentCall?.status]);
+  }, [remoteStream, currentCall?.status, isVideoCall]);
 
   if (!currentCall) return null;
 
@@ -47,13 +63,15 @@ export function CallOverlay() {
         exit={{ opacity: 0, scale: 0.95 }}
         className="fixed inset-0 z-[100] bg-black flex flex-col overflow-hidden"
       >
-        {/* Invisible Audio Elements for Audio Calls */}
-        {remoteStream && !isVideoCall && !isIncoming && (
-          <audio ref={remoteVideoRef as any} autoPlay playsInline />
-        )}
-        {localStream && !isVideoCall && !isIncoming && (
-          <audio ref={localVideoRef as any} autoPlay playsInline muted />
-        )}
+        {/* Always-in-DOM Media Elements to bypass Mobile Autoplay Restrictions */}
+        <audio ref={remoteAudioRef} autoPlay playsInline className="hidden" />
+        <audio ref={localAudioRef} autoPlay playsInline muted className="hidden" />
+        <video 
+          ref={remoteVideoRef} 
+          autoPlay 
+          playsInline 
+          className={`absolute inset-0 w-full h-full object-cover z-0 ${(!remoteStream || !isVideoCall || isIncoming) ? 'hidden' : 'block'}`}
+        />
 
         {/* Background Blur for Audio or Ringing */}
         {(!remoteStream || isIncoming || !isVideoCall) && (
@@ -63,15 +81,7 @@ export function CallOverlay() {
           </div>
         )}
 
-        {/* Remote Video Stream (Main Background) */}
-        {remoteStream && isVideoCall && !isIncoming && (
-          <video 
-            ref={remoteVideoRef} 
-            autoPlay 
-            playsInline 
-            className="absolute inset-0 w-full h-full object-cover z-0"
-          />
-        )}
+        {/* Remote Video Stream (Main Background) is rendered above as always-in-DOM */}
 
         {/* Header / Caller Info */}
         <div className="relative z-10 flex flex-col items-center pt-24 gap-4">

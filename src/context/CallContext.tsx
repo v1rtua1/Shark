@@ -72,6 +72,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
   const pc = useRef<RTCPeerConnection | null>(null);
   const callDocRef = useRef<any>(null);
+  const isSettingRemoteDesc = useRef(false);
 
   // Listen for incoming calls
   useEffect(() => {
@@ -189,7 +190,8 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     // Listen for answer
     onSnapshot(newCallRef, (snapshot) => {
       const data = snapshot.data();
-      if (!peerConnection.currentRemoteDescription && data?.answer) {
+      if (!peerConnection.currentRemoteDescription && data?.answer && !isSettingRemoteDesc.current) {
+        isSettingRemoteDesc.current = true;
         const answerDescription = new RTCSessionDescription(data.answer);
         peerConnection.setRemoteDescription(answerDescription).then(() => {
           // Listen for remote ICE candidates AFTER remote description is set
@@ -315,6 +317,7 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     setIsMuted(false);
     setIsVideoOff(false);
     callDocRef.current = null;
+    isSettingRemoteDesc.current = false;
   };
 
   const toggleMute = () => {
