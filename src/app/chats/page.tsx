@@ -78,12 +78,13 @@ export default function ChatListScreen() {
 
     try {
       let targetUser = null;
-      let snap = await getDocs(query(collection(db, "users"), where("email", "==", contactEmail)));
+      const cleanEmail = contactEmail.trim();
+      let snap = await getDocs(query(collection(db, "users"), where("email", "==", cleanEmail)));
       
       if (!snap.empty) {
         targetUser = snap.docs[0].data();
       } else {
-        snap = await getDocs(query(collection(db, "users"), where("email", "==", contactEmail.toLowerCase())));
+        snap = await getDocs(query(collection(db, "users"), where("email", "==", cleanEmail.toLowerCase())));
         if (!snap.empty) {
           targetUser = snap.docs[0].data();
         }
