@@ -87,6 +87,12 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
       if (snapshot.exists()) {
         const data = snapshot.data() as CallData;
         if (data.status === "calling" && !currentCall) {
+          if (typeof window !== "undefined" && "Notification" in window && Notification.permission === "granted") {
+            new Notification(`Incoming ${data.type} call`, {
+              body: `${data.callerName} is calling you. Tap to answer.`,
+              icon: "/favicon.ico"
+            });
+          }
           // Play ringtone here if needed
           setCurrentCall({ ...data, status: "ringing" });
           callDocRef.current = doc(db, "calls", data.id);

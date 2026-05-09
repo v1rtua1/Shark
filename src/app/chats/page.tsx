@@ -4,12 +4,12 @@ import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { PageTransition } from "@/components/ui/PageTransition";
 import { motion, AnimatePresence } from "framer-motion";
-import { Search, Plus, UserPlus, X, Check } from "lucide-react";
+import { Search, Plus, UserPlus, X, Check, Trash2 } from "lucide-react";
 import { Input } from "@/components/ui/Input";
 import { Button } from "@/components/ui/Button";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/context/AuthContext";
-import { collection, onSnapshot, query, where, getDocs, doc, updateDoc, arrayUnion, getDoc } from "firebase/firestore";
+import { collection, onSnapshot, query, where, getDocs, doc, updateDoc, arrayUnion, arrayRemove, getDoc } from "firebase/firestore";
 import { db } from "@/lib/firebase";
 
 interface ChatUser {
@@ -128,9 +128,30 @@ export default function ChatListScreen() {
         setAddStatus("idle");
       }, 2000);
       
-    } catch (err: any) {
+      } catch (err: any) {
       setAddStatus("error");
       setAddMessage(err.message || "An error occurred");
+    }
+  };
+
+  const handleDeleteContact = async (e: React.MouseEvent, targetUid: string) => {
+    e.stopPropagation();
+    if (!currentUser || !db) return;
+    
+    // Confirm before deletion
+    if (!window.confirm("Are you sure you want to delete this contact?")) return;
+    
+    try {
+      const myRef = doc(db, "users", currentUser.uid);
+      await updateDoc(myRef, {
+        contacts: arrayRemove(targetUid)
+      });
+      // Optionally remove their chatData for complete cleanup
+      await updateDoc(myRef, {
+        [`chatsData.${targetUid}`]: null
+      }).catch(() => {});
+    } catch (err) {
+      console.error("Failed to delete contact", err);
     }
   };
 
@@ -264,6 +285,14 @@ export default function ChatListScreen() {
                 )}
               </div>
             </div>
+            
+            <button
+              onClick={(e) => handleDeleteContact(e, chat.uid)}
+              className="p-2 shrink-0 text-zinc-600 hover:text-red-500 hover:bg-red-500/10 rounded-full transition-colors active:scale-95"
+              aria-label="Delete chat"
+            >
+              <Trash2 className="w-5 h-5" />
+            </button>
           </motion.div>
         ))}
         
