@@ -11,7 +11,8 @@ import {
   addDoc, 
   updateDoc, 
   deleteDoc, 
-  getDoc 
+  getDoc,
+  arrayUnion
 } from "firebase/firestore";
 
 type CallType = "audio" | "video";
@@ -166,7 +167,9 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     // Save candidate data
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
-        addDoc(collection(newCallRef, "callerCandidates"), event.candidate.toJSON());
+        updateDoc(newCallRef, { 
+          callerCandidates: arrayUnion(event.candidate.toJSON()) 
+        }).catch(e => console.error("ICE Error:", e));
       }
     };
 
@@ -195,13 +198,14 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
         const answerDescription = new RTCSessionDescription(data.answer);
         peerConnection.setRemoteDescription(answerDescription).then(() => {
           // Listen for remote ICE candidates AFTER remote description is set
-          onSnapshot(collection(newCallRef, "receiverCandidates"), (candSnapshot) => {
-            candSnapshot.docChanges().forEach((change) => {
-              if (change.type === "added") {
-                const candidate = new RTCIceCandidate(change.doc.data());
+          onSnapshot(newCallRef, (docSnap) => {
+            const currentData = docSnap.data();
+            if (currentData?.receiverCandidates) {
+              currentData.receiverCandidates.forEach((candidateObj: any) => {
+                const candidate = new RTCIceCandidate(candidateObj);
                 peerConnection.addIceCandidate(candidate).catch(e => console.error(e));
-              }
-            });
+              });
+            }
           });
         });
         setCurrentCall(prev => prev ? { ...prev, status: "connected" } : null);
@@ -228,7 +232,9 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
 
     peerConnection.onicecandidate = (event) => {
       if (event.candidate) {
-        addDoc(collection(callDocRef.current, "receiverCandidates"), event.candidate.toJSON());
+        updateDoc(callDocRef.current, {
+          receiverCandidates: arrayUnion(event.candidate.toJSON())
+        }).catch(e => console.error("ICE Error:", e));
       }
     };
 
@@ -254,14 +260,15 @@ export const CallProvider = ({ children }: { children: React.ReactNode }) => {
     await updateDoc(callDocRef.current, { answer, status: "connected" });
     setCurrentCall({ ...currentCall, status: "connected" });
 
-    // Listen for remote ICE candidates
-    onSnapshot(collection(callDocRef.current, "callerCandidates"), (snapshot) => {
-      snapshot.docChanges().forEach((change) => {
-        if (change.type === "added") {
-          const candidate = new RTCIceCandidate(change.doc.data());
+    // Process remote ICE candidates
+    onSnapshot(callDocRef.current, (docSnap) => {
+      const currentData = docSnap.data();
+      if (currentData?.callerCandidates) {
+        currentData.callerCandidates.forEach((candidateObj: any) => {
+          const candidate = new RTCIceCandidate(candidateObj);
           peerConnection.addIceCandidate(candidate).catch(e => console.error(e));
-        }
-      });
+        });
+      }
     });
 
     // Listen for end call
