@@ -36,7 +36,7 @@ export const MessageBubble = memo(function MessageBubble({ content, isOwn, times
             <img src={imageUrl} alt="Attached media" className="w-full h-auto object-cover" loading="lazy" />
           </div>
         )}
-        {content && <p className="text-[15px] leading-relaxed break-words whitespace-pre-wrap [word-wrap:break-word] min-w-0">{content}</p>}
+        {content && <p className="text-[15px] leading-relaxed break-words whitespace-pre-wrap [word-wrap:break-word] min-w-0 selectable-text">{content}</p>}
         
         {/* Timestamp and status */}
         <div

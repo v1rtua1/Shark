@@ -61,6 +61,11 @@ html, body {
   overscroll-behavior: none;
   /* Prevent text selection highlight on tap */
   -webkit-tap-highlight-color: transparent;
+  
+  /* Prevent copy/paste globally */
+  -webkit-user-select: none;
+  user-select: none;
+
   position: fixed;
   top: 0;
   left: 0;
@@ -86,6 +91,12 @@ html, body {
   backdrop-filter: blur(20px);
   -webkit-backdrop-filter: blur(20px);
   border-top: 1px solid var(--glass-border);
+}
+
+/* Allow selection only on inputs, textareas and specific elements */
+input, textarea, .selectable-text {
+  -webkit-user-select: auto !important;
+  user-select: auto !important;
 }
 
 /* Hide scrollbar for sleek feel */
